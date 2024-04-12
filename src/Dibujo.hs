@@ -1,6 +1,24 @@
 module Dibujo (encimar, 
-              
-    -- agregar las funciones constructoras
+                figura, 
+                rotar, 
+                espejar, 
+                rot45, 
+                apilar, 
+                juntar, 
+                (^^^), 
+                (.-.), 
+                (///), 
+                r90, 
+                r180, 
+                r270, 
+                encimar4, 
+                cuarteto, 
+                ciclar, 
+                mapDib, 
+                change, 
+                foldDib, 
+                figuras, 
+                Dibujo(..)
     ) where
 
 
@@ -91,7 +109,7 @@ ciclar dib =  (.-.) ((///) dib (r90 dib)) ((///) (r180 dib) (r270 dib))
 
 -- map para nuestro lenguaje
 mapDib :: (a -> b) -> Dibujo a -> Dibujo b
-mapDib f (Figura dib)  = Figura (f dib)
+mapDib f (Figura x)  = Figura (f x)
 mapDib f (Rotar dib)   = Rotar (mapDib f dib) 
 mapDib f (Espejar dib) = Espejar (mapDib f dib)
 mapDib f (Rot45 dib)   = Rot45 (mapDib f dib)
@@ -105,13 +123,14 @@ mapDib f (Encimar dib1 dib2) = Encimar (mapDib f dib1) (mapDib f dib2)
 
 -- Cambiar todas las básicas de acuerdo a la función.
 change :: (a -> Dibujo b) -> Dibujo a -> Dibujo b
-change f (Figura dib)  = f dib
+change f (Figura x)    = f x
 change f (Rotar dib)   = Rotar (change f dib) 
 change f (Espejar dib) = Espejar (change f dib)
 change f (Rot45 dib)   = Rot45 (change f dib)
 change f (Apilar float1 float2 dib1 dib2) = Apilar float1 float2 (change f dib1) (change f dib2)
 change f (Juntar float1 float2 dib1 dib2) = Juntar float1 float2 (change f dib1) (change f dib2)
 change f (Encimar dib1 dib2) = Encimar (change f dib1) (change f dib2) 
+
 
 -- Principio de recursión para Dibujos.
 -- Estructura general para la semántica (a no asustarse). Ayuda: 
@@ -128,10 +147,24 @@ foldDib ::
   (b -> b -> b) ->
   Dibujo a ->
   b
-foldDib fig rot esp r45 api jun enc (Figura dib)  = fig dib 
+foldDib fig rot esp r45 api jun enc (Figura x)  = fig x 
 foldDib fig rot esp r45 api jun enc (Rotar dib)   = rot (foldDib fig rot esp r45 api jun enc dib) 
 foldDib fig rot esp r45 api jun enc (Espejar dib) = esp (foldDib fig rot esp r45 api jun enc dib)
 foldDib fig rot esp r45 api jun enc (Rot45 dib)   = r45 (foldDib fig rot esp r45 api jun enc dib)
 foldDib fig rot esp r45 api jun enc (Apilar float1 float2 dib1 dib2) = api float1 float2 (foldDib fig rot esp r45 api jun enc dib1) (foldDib fig rot esp r45 api jun enc dib2)
 foldDib fig rot esp r45 api jun enc (Juntar float1 float2 dib1 dib2) = jun float1 float2 (foldDib fig rot esp r45 api jun enc dib1) (foldDib fig rot esp r45 api jun enc dib2)
 foldDib fig rot esp r45 api jun enc (Encimar dib1 dib2) = enc (foldDib fig rot esp r45 api jun enc dib1) (foldDib fig rot esp r45 api jun enc dib2)
+
+
+-- figuras :: Dibujo a -> [a]
+-- figuras (Figura x) = [x]
+-- figuras (Rotar dib) = figuras dib
+-- figuras (Espejar dib) = figuras dib
+-- figuras (Rot45 dib) = figuras dib
+-- figuras (Apilar float1 float2 dib1 dib2) = figuras dib1 ++ figuras dib2
+-- figuras (Juntar float1 float2 dib1 dib2) = figuras dib1 ++ figuras dib2
+-- figuras (Encimar dib1 dib2) = figuras dib1 ++ figuras dib2
+
+
+figuras :: Dibujo a -> [a]
+figuras dib = foldDib (\x -> [x]) id id id (\i j xs ys -> xs ++ ys) (\i j xs ys -> xs ++ ys) (\xs ys -> xs ++ ys) dib
