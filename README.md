@@ -16,10 +16,10 @@ Pueden usar esta checklist para indicar el avance.
 - [X] Módulo `Pred.hs`. Punto extra si definen predicados para transformaciones innecesarias (por ejemplo, espejar dos veces es la identidad).
 
 ## 1.2. Interpretación geométrica
-- [~] Módulo `Interp.hs`.
+- [X] Módulo `Interp.hs`.
 
 ## 1.3. Expresión artística (Utilizar el lenguaje)
-- [ ] El dibujo de `Dibujos/Feo.hs` se ve lindo.
+- [X] El dibujo de `Dibujos/Feo.hs` se ve lindo.
 - [ ] Módulo `Dibujos/Grilla.hs`.
 - [ ] Módulo `Dibujos/Escher.hs`.
 - [ ] Listado de dibujos en `Main.hs`.

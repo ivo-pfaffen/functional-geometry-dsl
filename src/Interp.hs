@@ -57,11 +57,20 @@ sup fp1 fp2 d w h = ov (fp1 d w h) (fp2 d w h)
 --f(x, w', h) ∪ g(d+w', r'*w, h) 
 -- r=m/(m+n), r'=n/(m+n), w'=r*w
 jun :: Float -> Float -> FloatingPic -> FloatingPic -> FloatingPic
-jun r r' fp1 fp2 d w h = ov (fp1 d (r V.* w) h) (fp2 (d V.+ r V.* w) (r' V.* w) h) 
-
+jun m n fp1 fp2 d w h = (fp1 d (r V.* w) h) 
+                        `ov`
+                        (fp2 (d V.+ r V.* w) (r' V.* w) h) 
+    where 
+      r = m / (m + n) 
+      r' = n / (m + n)
 -- f(d + h', w, r*h) ∪ g(d, w, h') con r' = n/(m+n), r=m/(m+n), h'=r'*h
 api :: Float -> Float -> FloatingPic -> FloatingPic -> FloatingPic
-api r r' fp1 fp2 d w h = ov (fp1 (d V.+ (r' V.* h)) w (r V.* h)) (fp2 d w (r' V.* h))
+api m n fp1 fp2 d w h = (fp1 (d V.+ (r' V.* h)) w (r V.* h)) 
+                        `ov` 
+                        (fp2 d w (r' V.* h)) 
+    where 
+      r = m / (m + n) 
+      r' = n / (m + n)
 
 -- type Output a = a -> FloatingPic 
 
