@@ -1,9 +1,13 @@
 module Pred (
   Pred,
   cambiar, 
-  -- anyDib, allDib, orP, andP, falla
+  anyFig, 
+  allFig, 
+  orP, 
+  andP, 
+  falla
 ) where
-import Dibujo (Dibujo, figura, juntar, apilar, rot45, rotar, encimar, espejar, foldDib, mapDib, change)
+import Dibujo (Dibujo, figura, foldDib, change)
 
 
 -- `Pred a` define un predicado sobre figuras básicas. Por ejemplo,

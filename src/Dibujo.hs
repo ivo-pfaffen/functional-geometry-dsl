@@ -42,7 +42,7 @@ infixr 8 ///
 -- es la función identidad, componer 1 vez es aplicar la función 1 vez, etc.
 -- Componer negativamente es un error!
 comp :: Int -> (a -> a) -> a -> a
-comp 0 f = id
+comp 0 _ = id
 comp n f  | n < 0      = error "No esta permitido componer negativamente"
           | otherwise  = f . (comp (n-1) f)
 
@@ -147,7 +147,7 @@ foldDib ::
   (b -> b -> b) ->
   Dibujo a ->
   b
-foldDib fig rot esp r45 api jun enc (Figura x)  = fig x 
+foldDib fig _ _ _ _ _ _ (Figura x)  = fig x 
 foldDib fig rot esp r45 api jun enc (Rotar dib)   = rot (foldDib fig rot esp r45 api jun enc dib) 
 foldDib fig rot esp r45 api jun enc (Espejar dib) = esp (foldDib fig rot esp r45 api jun enc dib)
 foldDib fig rot esp r45 api jun enc (Rot45 dib)   = r45 (foldDib fig rot esp r45 api jun enc dib)
@@ -167,4 +167,4 @@ foldDib fig rot esp r45 api jun enc (Encimar dib1 dib2) = enc (foldDib fig rot e
 
 
 figuras :: Dibujo a -> [a]
-figuras dib = foldDib (\x -> [x]) id id id (\i j xs ys -> xs ++ ys) (\i j xs ys -> xs ++ ys) (\xs ys -> xs ++ ys) dib
+figuras dib = foldDib (\x -> [x]) id id id (\_ _ xs ys -> xs ++ ys) (\_ _ xs ys -> xs ++ ys) (\xs ys -> xs ++ ys) dib

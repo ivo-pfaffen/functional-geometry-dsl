@@ -102,10 +102,14 @@ efe = figura (Efe, Azul)
 
 testAll :: Dibujo Basica
 testAll = grilla [
-    [cruzTangulo         , rot45 cruzTangulo   , efe                , rot45 efe                ],
-    [apilados Rectangulo , apilados2 Rectangulo, juntados Rectangulo, juntados2 Rectangulo     ],
-    [flipante1 Rectangulo, flipante2 Rectangulo, figRoja Triangulo  , rotar $ figAzul Triangulo],
-    [rotar $ apilados Efe, apilados2 Efe       , juntados Efe       , juntados2 Efe            ]
+    [cruzTangulo ],
+    -- [cruzTangulo         , rot45 cruzTangulo   , cruzTangulo         , rot45 cruzTangulo],
+    -- [cruzTangulo         , rot45 cruzTangulo   , cruzTangulo         , rot45 cruzTangulo],
+    [cruzTangulo ]
+    -- [cruzTangulo         , rot45 cruzTangulo   , efe                , rot45 efe                ],
+    -- [apilados Rectangulo , apilados2 Rectangulo, juntados Rectangulo, juntados2 Rectangulo     ],
+    -- [flipante1 Rectangulo, flipante2 Rectangulo, figRoja Triangulo  , rotar $ figAzul Triangulo],
+    -- [rotar $ apilados Efe, apilados2 Efe       , juntados Efe       , juntados2 Efe            ]
     ]
 
 feoConf :: Conf
