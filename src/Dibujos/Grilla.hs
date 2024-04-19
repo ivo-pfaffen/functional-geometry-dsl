@@ -28,9 +28,12 @@ interpBas b (x1,y1) (x2,y2) (x3,y3) = translate x1 (y1+42) $ scale 0.15 0.15 $ t
 coordenada :: Basica -> Dibujo Basica
 coordenada s = figura s
 
+texto :: String -> String -> String
+texto s1 s2 = "(" ++ s1 ++ "," ++ s2 ++ ")"
+
 generarFila :: Int -> Int -> [String]
-generarFila row 0 = ["(" ++ show row ++ ",0)"]
-generarFila row col = generarFila row (col-1) ++ ["(" ++ show row ++ "," ++ show col ++ ")"]
+generarFila row 0 = [texto (show row) (show 0)]
+generarFila row col = generarFila row (col-1) ++ [texto (show row) (show col)]
 
 generarColumna :: [Basica] -> [Dibujo Basica]
 generarColumna = map coordenada
