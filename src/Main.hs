@@ -3,6 +3,7 @@ module Main (main) where
 -- import Dibujos.Ejemplo (ejemploConf)
 import Dibujos.Feo (feoConf)
 import Dibujos.Grilla (grillaConf)
+import Dibujos.Escher (escherConf)
 -- import Dibujos.Cuadrados(cuadConf)
 import FloatingPic (Conf (..))
 import Interp (initial)
@@ -15,7 +16,7 @@ import InterpSVG (ConfSVG, initialSVG', simpleSVG)
 -- Lista de configuraciones de los dibujos
 configs :: [Conf]
 -- configs = [ejemploConf, feoConf,cuadConf 3]
-configs = [feoConf, grillaConf]
+configs = [feoConf, grillaConf, escherConf]
 
 configsH :: [ConfH]
 configsH = map (\(Conf n p _) -> simpleHaha n p) configs
