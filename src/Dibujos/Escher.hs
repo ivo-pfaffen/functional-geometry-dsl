@@ -1,9 +1,9 @@
 module Dibujos.Escher where
 
-import Dibujo (Dibujo, figura, espejar, rot45, r90, rotar, encimar, cuarteto)
+import Dibujo (Dibujo, figura, espejar, rot45, rotar, encimar, cuarteto, apilar, juntar)
 import FloatingPic(Conf(..), Output, half)
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
-import Graphics.Gloss (Picture, black, color, line, pictures)
+import Graphics.Gloss (Picture, black, color, line)
 
 data Color = Negro
     deriving (Show, Eq)
@@ -52,27 +52,29 @@ blank = base (Rectangulo, Negro)
 
 -- blank <- Rectangulo
 -- Esquina con nivel de detalle en base a la figura p.
-esquina :: Int -> Dibujo Escher -> Dibujo Escher
-esquina 1 p = cuarteto blank blank blank (dibujoU p)
-esquina n p = cuarteto (esquina (n-1) p) (lado (n-1) p) (rotar (lado (n-1) p)) (dibujoU p)
+esquina :: Int -> Escher -> Dibujo Escher
+esquina 1 p = cuarteto blank blank blank (dibujoU (figura p))
+esquina n p = cuarteto (esquina (n-1) p) (lado (n-1) p) (rotar (lado (n-1) p)) (dibujoU (figura p))
 
 -- Lado con nivel de detalle.
-lado :: Int -> Dibujo Escher -> Dibujo Escher
-lado 1 p = cuarteto blank blank (rotar (dibujoT p)) (dibujoT p)
-lado n p = cuarteto (lado (n-1) p) (lado (n-1) p) (rotar p) p
+lado :: Int -> Escher -> Dibujo Escher
+lado 1 p = cuarteto blank blank (rotar (dibujoT (figura p))) (dibujoT (figura p))
+lado n p = cuarteto (lado (n-1) p) (lado (n-1) p) (rotar (figura p)) (figura p)
 
+-- Modularizo fila del combinador del dibujo
+filaCombinador :: Dibujo Escher -> Dibujo Escher -> Dibujo Escher -> Dibujo Escher
+filaCombinador e1 e2 e3 = juntar (3/4) (1/4) (juntar (1/2) 1 e1 e2) e3
 
--- Por suerte no tenemos que poner el tipo!
-noneto p q r s t u v w x = undefined
+-- El combinador del dibujo
+noneto p q r s t u v w x = apilar (1/4) (3/4) (filaCombinador p q r) (apilar (1/1) (1/2) (filaCombinador s t u) (filaCombinador v w x)) 
 
 -- El dibujo de Escher. Recursivo. 
 escher :: Int -> Escher -> Dibujo Escher
-escher i e = base e
-
+escher i e = noneto (esquina i e) (lado i e) blank blank blank blank blank blank blank
 
 escherConf :: Conf
 escherConf = Conf {
     name = "Escher"
-    , pic = lado 8 (base (Triangulo, Negro))
+    , pic = escher 7 (Triangulo, Negro)
     , bas = interpBas
 }
