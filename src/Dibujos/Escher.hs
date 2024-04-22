@@ -1,9 +1,9 @@
 module Dibujos.Escher where
 
-import Dibujo (Dibujo, figura, espejar, rot45, rotar, encimar, cuarteto, apilar, juntar)
+import Dibujo (Dibujo, figura, espejar, rot45, rotar, encimar, cuarteto, apilar, juntar, r180)
 import FloatingPic(Conf(..), Output, half)
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
-import Graphics.Gloss (Picture, black, color, line)
+import Graphics.Gloss (Picture, black, color, line, polygon)
 
 data Color = Negro
     deriving (Show, Eq)
@@ -21,9 +21,9 @@ colorear Negro = color black
 --  | 
 --  x --- x + y
 interpBasicaSinColor :: Output BasicaSinColor
-interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), half y V.+ half w, y, (0,0)] -- (vers. triangulo 2)
+interpBasicaSinColor Triangulo x y w = polygon $ map (x V.+) [(0,0), half y V.+ half w, y, (0,0)] -- Triángulo mirando arriba (las figuras U, T quedan "rotadas" pero es más simétrico)
 interpBasicaSinColor Rectangulo x y w = line [x, x V.+ y, x V.+ y V.+ w, x V.+ w, x]
--- interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), y V.+ half w, w, (0,0)]
+-- interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), y V.+ half w, w, (0,0)] -- Triangulo acostado (las figuras U, T quedan casi iguales al documento)
 
 interpBas :: Output Escher
 interpBas (b, c) x y w = colorear c $ interpBasicaSinColor b x y w
@@ -45,7 +45,7 @@ dibujoU e = encimar (encimar (base2 e) (rotar (base2 e))) (encimar (rotar (rotar
 
 -- El dibujo t: over(fish, over(fish2, fish3))
 dibujoT :: Dibujo Escher -> Dibujo Escher
-dibujoT e = encimar e (encimar (base3 e) (base2 e))
+dibujoT e = (encimar e (encimar (base3 e) (base2 e)))
 
 blank :: Dibujo Escher
 blank = base (Rectangulo, Negro)
@@ -68,13 +68,18 @@ filaCombinador e1 e2 e3 = juntar (3/4) (1/4) (juntar (1/2) 1 e1 e2) e3
 -- El combinador del dibujo
 noneto p q r s t u v w x = apilar (1/4) (3/4) (filaCombinador p q r) (apilar (1/1) (1/2) (filaCombinador s t u) (filaCombinador v w x)) 
 
--- El dibujo de Escher. Recursivo. 
+-- Dibujo de Escher
 escher :: Int -> Escher -> Dibujo Escher
-escher i e = noneto (esquina i e) (lado i e) blank blank blank blank blank blank blank
+-- P Q R                    
+-- S T U                  
+-- V W X
+escher i e =  noneto (esquina i e)         (lado i e)               (espejar (esquina i e)) 
+              (rotar (lado i e))       (dibujoU (figura e))        (espejar (rotar (lado i e))) 
+             (rotar (esquina i e))  (rotar (rotar (lado i e)))   (espejar (rotar (esquina i e)))
 
 escherConf :: Conf
 escherConf = Conf {
     name = "Escher"
-    , pic = escher 7 (Triangulo, Negro)
+    , pic = escher 6 (Triangulo, Negro)
     , bas = interpBas
 }
