@@ -3,12 +3,12 @@ module Dibujos.Escher where
 import Dibujo (Dibujo, figura, espejar, rot45, rotar, encimar, cuarteto, apilar, juntar, r180)
 import FloatingPic(Conf(..), Output, half)
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
-import Graphics.Gloss (Picture, black, color, line, polygon)
+import Graphics.Gloss (Picture(Blank), black, color, line, polygon, pictures)
 
 data Color = Negro
     deriving (Show, Eq)
 
-data BasicaSinColor = Triangulo | Rectangulo
+data BasicaSinColor = Triangulo | Rectangulo | Vacio
     deriving (Show, Eq)
 
 type Escher = (BasicaSinColor, Color)
@@ -21,9 +21,12 @@ colorear Negro = color black
 --  | 
 --  x --- x + y
 interpBasicaSinColor :: Output BasicaSinColor
-interpBasicaSinColor Triangulo x y w = polygon $ map (x V.+) [(0,0), half y V.+ half w, y, (0,0)] -- Triángulo mirando arriba (las figuras U, T quedan "rotadas" pero es más simétrico)
+-- interpBasicaSinColor Triangulo x y w = polygon $ map (x V.+) [(0,0), half y V.+ half w, y, (0,0)] -- Triángulo mirando arriba
+-- interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), y V.+ half w, w, (0,0)]         -- Triangulo acostado
+-- interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), w, y, (0,0)]                    -- Triangulo rectángulo normal
+interpBasicaSinColor Triangulo x y w = pictures [(line $ map (x V.+) [(0,0), w, y, (0,0)]), (polygon $ map (x V.+) [(0,0), half w, half y, (0,0)])] -- Triangulo rectángulo decorado
 interpBasicaSinColor Rectangulo x y w = line [x, x V.+ y, x V.+ y V.+ w, x V.+ w, x]
--- interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), y V.+ half w, w, (0,0)] -- Triangulo acostado (las figuras U, T quedan casi iguales al documento)
+interpBasicaSinColor Vacio x y w = Blank
 
 interpBas :: Output Escher
 interpBas (b, c) x y w = colorear c $ interpBasicaSinColor b x y w
@@ -45,10 +48,10 @@ dibujoU e = encimar (encimar (base2 e) (rotar (base2 e))) (encimar (rotar (rotar
 
 -- El dibujo t: over(fish, over(fish2, fish3))
 dibujoT :: Dibujo Escher -> Dibujo Escher
-dibujoT e = (encimar e (encimar (base3 e) (base2 e)))
+dibujoT e = (encimar (encimar (base3 e) (base2 e)) e)
 
 blank :: Dibujo Escher
-blank = base (Rectangulo, Negro)
+blank = base (Vacio, Negro)
 
 -- blank <- Rectangulo
 -- Esquina con nivel de detalle en base a la figura p.
@@ -56,17 +59,21 @@ esquina :: Int -> Escher -> Dibujo Escher
 esquina 1 p = cuarteto blank blank blank (dibujoU (figura p))
 esquina n p = cuarteto (esquina (n-1) p) (lado (n-1) p) (rotar (lado (n-1) p)) (dibujoU (figura p))
 
--- Lado con nivel de detalle.
+-- Lado con nivel de detalle. Según la consigna:
+-- lado(1, f) = cuarteto(blank, blank, rotar(dibujo_t(f)), dibujo_t(f))
+-- lado(2, f) = cuarteto(lado(1, f), lado(1, f), rotar(f), f)
+-- para lograr un mejor efecto, modifico los últimos dos argumentos del caso recursivo (uso dibujoT en vez de la figura base)
 lado :: Int -> Escher -> Dibujo Escher
 lado 1 p = cuarteto blank blank (rotar (dibujoT (figura p))) (dibujoT (figura p))
-lado n p = cuarteto (lado (n-1) p) (lado (n-1) p) (rotar (figura p)) (figura p)
+lado n p = cuarteto (lado (n-1) p) (lado (n-1) p) (rotar (dibujoT (figura p))) (dibujoT (figura p))
 
 -- Modularizo fila del combinador del dibujo
 filaCombinador :: Dibujo Escher -> Dibujo Escher -> Dibujo Escher -> Dibujo Escher
-filaCombinador e1 e2 e3 = juntar (3/4) (1/4) (juntar (1/2) 1 e1 e2) e3
+filaCombinador e1 e2 e3 = juntar (2/3) (1/3) (juntar (1/2) (1/2) e1 e2) e3
 
 -- El combinador del dibujo
-noneto p q r s t u v w x = apilar (1/4) (3/4) (filaCombinador p q r) (apilar (1/1) (1/2) (filaCombinador s t u) (filaCombinador v w x)) 
+-- Ahora es simétrico. Anteriormente estaba implementado usando cuartos (para seguir estrictamente el documento).
+noneto p q r s t u v w x = apilar (1/3) (2/3) (filaCombinador p q r) (apilar (1/2) (1/2) (filaCombinador s t u) (filaCombinador v w x)) 
 
 -- Dibujo de Escher
 escher :: Int -> Escher -> Dibujo Escher
