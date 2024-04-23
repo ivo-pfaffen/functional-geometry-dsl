@@ -1,6 +1,6 @@
 module Dibujos.Escher where
 
-import Dibujo (Dibujo, figura, espejar, rot45, rotar, encimar, cuarteto, apilar, juntar, r180)
+import Dibujo (Dibujo, figura, espejar, rot45, r180, r270, rotar, encimar, cuarteto, apilar, juntar)
 import FloatingPic(Conf(..), Output, half)
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
 import Graphics.Gloss (Picture(Blank), black, color, line, polygon, pictures)
@@ -39,12 +39,12 @@ base2 :: Dibujo Escher -> Dibujo Escher
 base2 e = espejar (rot45 e) 
 
 base3 :: Dibujo Escher -> Dibujo Escher
-base3 e = rotar (rotar (rotar (base2 e))) 
+base3 e = r270 (base2 e)
 
 
 -- El dibujo u: over(over(fish2, rot(fish2)), over(rot(rot(fish2)), rot(rot(rot(fish2))))
 dibujoU :: Dibujo Escher -> Dibujo Escher
-dibujoU e = encimar (encimar (base2 e) (rotar (base2 e))) (encimar (rotar (rotar (base2 e)))  (rotar(rotar(rotar (base2 e)))))
+dibujoU e = encimar (encimar (base2 e) (rotar (base2 e))) (encimar (r180 (base2 e)) (r270 (base2 e)))
 
 -- El dibujo t: over(fish, over(fish2, fish3))
 dibujoT :: Dibujo Escher -> Dibujo Escher
@@ -82,7 +82,7 @@ escher :: Int -> Escher -> Dibujo Escher
 -- V W X
 escher i e =  noneto (esquina i e)         (lado i e)               (espejar (esquina i e)) 
               (rotar (lado i e))       (dibujoU (figura e))        (espejar (rotar (lado i e))) 
-             (rotar (esquina i e))  (rotar (rotar (lado i e)))   (espejar (rotar (esquina i e)))
+             (rotar (esquina i e))      (r180 (lado i e))         (espejar (rotar (esquina i e)))
 
 escherConf :: Conf
 escherConf = Conf {

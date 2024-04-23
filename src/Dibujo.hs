@@ -83,13 +83,13 @@ espejar = Espejar
 
 -- Rotaciones de múltiplos de 90.
 r90 :: Dibujo a -> Dibujo a
-r90 = comp 2 rot45
+r90 = Rotar
  
 r180 :: Dibujo a -> Dibujo a
-r180 = comp 2 r90  
+r180 = comp 2 rotar
 
 r270 :: Dibujo a -> Dibujo a
-r270 = comp 3 r90 
+r270 = comp 3 rotar 
 
 -- una figura repetida con las cuatro rotaciones, superimpuestas.
 -- Un dibujo repetido con las cuatro rotaciones, superpuestos.
