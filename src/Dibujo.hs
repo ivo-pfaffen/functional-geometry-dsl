@@ -109,13 +109,16 @@ ciclar dib =  (.-.) ((///) dib (r90 dib)) ((///) (r180 dib) (r270 dib))
 
 -- map para nuestro lenguaje
 mapDib :: (a -> b) -> Dibujo a -> Dibujo b
-mapDib f (Figura x)  = Figura (f x)
-mapDib f (Rotar dib)   = Rotar (mapDib f dib) 
-mapDib f (Espejar dib) = Espejar (mapDib f dib)
-mapDib f (Rot45 dib)   = Rot45 (mapDib f dib)
-mapDib f (Apilar float1 float2 dib1 dib2) = Apilar float1 float2 (mapDib f dib1) (mapDib f dib2)
-mapDib f (Juntar float1 float2 dib1 dib2) = Juntar float1 float2 (mapDib f dib1) (mapDib f dib2)
-mapDib f (Encimar dib1 dib2) = Encimar (mapDib f dib1) (mapDib f dib2) 
+-- mapDib f (Figura x)  = Figura (f x)
+-- mapDib f (Rotar dib)   = Rotar (mapDib f dib) 
+-- mapDib f (Espejar dib) = Espejar (mapDib f dib)
+-- mapDib f (Rot45 dib)   = Rot45 (mapDib f dib)
+-- mapDib f (Apilar float1 float2 dib1 dib2) = Apilar float1 float2 (mapDib f dib1) (mapDib f dib2)
+-- mapDib f (Juntar float1 float2 dib1 dib2) = Juntar float1 float2 (mapDib f dib1) (mapDib f dib2)
+-- mapDib f (Encimar dib1 dib2) = Encimar (mapDib f dib1) (mapDib f dib2) 
+
+mapDib f dib = foldDib (figura . f) rotar espejar rot45 (\i j d1 d2 -> apilar i j d1 d2) 
+                        (\i j d1 d2 -> apilar i j d1 d2) (\d1 d2 -> encimar d1 d2) dib
 
 -- verificar que las operaciones satisfagan
 -- 1. map figura = id
@@ -123,14 +126,16 @@ mapDib f (Encimar dib1 dib2) = Encimar (mapDib f dib1) (mapDib f dib2)
 
 -- Cambiar todas las básicas de acuerdo a la función.
 change :: (a -> Dibujo b) -> Dibujo a -> Dibujo b
-change f (Figura x)    = f x
-change f (Rotar dib)   = Rotar (change f dib) 
-change f (Espejar dib) = Espejar (change f dib)
-change f (Rot45 dib)   = Rot45 (change f dib)
-change f (Apilar float1 float2 dib1 dib2) = Apilar float1 float2 (change f dib1) (change f dib2)
-change f (Juntar float1 float2 dib1 dib2) = Juntar float1 float2 (change f dib1) (change f dib2)
-change f (Encimar dib1 dib2) = Encimar (change f dib1) (change f dib2) 
+-- change f (Figura x)    = f x
+-- change f (Rotar dib)   = Rotar (change f dib) 
+-- change f (Espejar dib) = Espejar (change f dib)
+-- change f (Rot45 dib)   = Rot45 (change f dib)
+-- change f (Apilar float1 float2 dib1 dib2) = Apilar float1 float2 (change f dib1) (change f dib2)
+-- change f (Juntar float1 float2 dib1 dib2) = Juntar float1 float2 (change f dib1) (change f dib2)
+-- change f (Encimar dib1 dib2) = Encimar (change f dib1) (change f dib2) 
 
+change f dib = foldDib f rotar espejar rot45 (\i j d1 d2 -> apilar i j d1 d2) 
+                        (\i j d1 d2 -> apilar i j d1 d2) (\d1 d2 -> encimar d1 d2) dib
 
 -- Principio de recursión para Dibujos.
 -- Estructura general para la semántica (a no asustarse). Ayuda: 

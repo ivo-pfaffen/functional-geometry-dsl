@@ -4,7 +4,7 @@ module Dibujos.Grilla (
 ) where
 
 import Dibujo (Dibujo, figura, juntar, apilar)
-import Graphics.Gloss ( Picture, text, translate, scale, color, black, red )
+import Graphics.Gloss (text, translate, scale)
 import FloatingPic (Output, Conf(..))
 
 row :: [Dibujo a] -> Dibujo a
@@ -23,7 +23,7 @@ grilla = column . map row
 type Basica = String
 
 interpBas :: Output Basica
-interpBas b (x1,y1) (x2,y2) (x3,y3) = translate x1 (y1+42) $ scale 0.15 0.15 $ text b
+interpBas b (x1,y1) _ _ = translate x1 (y1+42) $ scale 0.15 0.15 $ text b
 
 coordenada :: Basica -> Dibujo Basica
 coordenada s = figura s
@@ -32,15 +32,15 @@ texto :: String -> String -> String
 texto s1 s2 = "(" ++ s1 ++ "," ++ s2 ++ ")"
 
 generarFila :: Int -> Int -> [String]
-generarFila row 0 = [texto (show row) (show 0)]
-generarFila row col = generarFila row (col-1) ++ [texto (show row) (show col)]
+generarFila r 0 = [texto (show r) (show (0 :: Integer))]
+generarFila r col = generarFila r (col-1) ++ [texto (show r) (show col)]
 
 generarColumna :: [Basica] -> [Dibujo Basica]
 generarColumna = map coordenada
 
 generarGrilla:: Int -> Int -> [[Dibujo Basica]]
 generarGrilla 0 col = [generarColumna (generarFila 0 col)]
-generarGrilla row col =  generarGrilla (row-1) col ++ [generarColumna (generarFila row col)]
+generarGrilla r col =  generarGrilla (r-1) col ++ [generarColumna (generarFila r col)]
 
 grillaEjemplo :: Dibujo Basica
 grillaEjemplo = grilla (generarGrilla 7 7) 

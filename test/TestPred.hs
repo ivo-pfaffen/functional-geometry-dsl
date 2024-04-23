@@ -1,7 +1,7 @@
 module Main (main) where
 
 import Test.HUnit
-import Pred (Pred, cambiar, anyFig, allFig, orP, andP, falla)
+import Pred (Pred, cambiar, anyFig, allFig, orP, andP)
 import Dibujo (Dibujo, figura)
 import Dibujos.Feo (BasicaSinColor(Triangulo, Rectangulo))
 
@@ -20,9 +20,6 @@ dib1 = figura Triangulo
 dib2 = figura Rectangulo
 
 -- Define the test cases
-testFalla :: Test
-testFalla = "falla always returns True" ~: falla ~?= True
-
 testAndP1 :: Test
 testAndP1 = "andP returns True when both predicates are satisfied" ~: andP isTriangulo isTriangulo Triangulo ~?= True
 
@@ -52,4 +49,4 @@ testAllFig2 = "allFig returns False when not all figures satisfy the predicate" 
 
 main :: IO Counts
 main = runTestTT $ TestList
-    [testFalla, testAndP1, testAndP2, testOrP1, testOrP2, testCambiar, testAnyFig1, testAnyFig2, testAllFig1, testAllFig2]
+    [testAndP1, testAndP2, testOrP1, testOrP2, testCambiar, testAnyFig1, testAnyFig2, testAllFig1, testAllFig2]

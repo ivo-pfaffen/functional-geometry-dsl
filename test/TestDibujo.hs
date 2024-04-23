@@ -36,13 +36,13 @@ testEncimar :: Test
 testEncimar = "encimar creates a Dibujo instance that is a superposition of two other Dibujo instances" ~: encimar dib1 dib2 ~?= Encimar dib1 dib2
 
 testR90 :: Test
-testR90 = "r90 creates a Dibujo instance that is a 90-degree rotation of another Dibujo" ~: r90 dib1 ~?= Rot45 (Rot45 dib1)
+testR90 = "r90 creates a Dibujo instance that is a 90-degree rotation of another Dibujo" ~: r90 dib1 ~?= Rotar dib1
 
 testR180 :: Test
-testR180 = "r180 creates a Dibujo instance that is a 180-degree rotation of another Dibujo" ~: r180 dib1 ~?= Rot45 (Rot45 (Rot45 (Rot45 dib1)))
+testR180 = "r180 creates a Dibujo instance that is a 180-degree rotation of another Dibujo" ~: r180 dib1 ~?= Rotar (Rotar dib1)
 
 testR270 :: Test
-testR270 = "r270 creates a Dibujo instance that is a 270-degree rotation of another Dibujo" ~: r270 dib1 ~?= Rot45 (Rot45 (Rot45 (Rot45 (Rot45 (Rot45 dib1)))))
+testR270 = "r270 creates a Dibujo instance that is a 270-degree rotation of another Dibujo" ~: r270 dib1 ~?= Rotar (Rotar (Rotar dib1))
 
 testEncimar4 :: Test
 testEncimar4 = "encimar4 creates a Dibujo instance that is a superposition of four rotations of another Dibujo" ~: encimar4 dib1 ~?= Encimar dib1 (Encimar (r90 dib1) (Encimar (r180 dib1) (r270 dib1)))
@@ -60,7 +60,7 @@ testChange :: Test
 testChange = "change applies a function to all figures in a Dibujo" ~: change toRectangulo dib1 ~?= dib2
 
 testFoldDib :: Test
-testFoldDib = "foldDib applies a function to all figures in a Dibujo" ~: foldDib (\_ -> 1) (+1) (+1) (+1) (\_ _ x y -> x + y) (\_ _ x y -> x + y) (+) dib1 ~?= 1
+testFoldDib = "foldDib applies a function to all figures in a Dibujo" ~: foldDib (\_ -> (1 :: Integer)) (+1) (+1) (+1) (\_ _ x y -> x + y) (\_ _ x y -> x + y) (+) dib1 ~?= 1
 
 testFiguras :: Test
 testFiguras = "figuras returns a list of all figures in a Dibujo" ~: figuras dib1 ~?= [Triangulo]

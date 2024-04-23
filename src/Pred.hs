@@ -4,8 +4,7 @@ module Pred (
   anyFig, 
   allFig, 
   orP, 
-  andP, 
-  falla
+  andP
 ) where
 import Dibujo (Dibujo, figura, foldDib, change)
 
@@ -25,11 +24,11 @@ cambiar p f dib = change (\x -> if p x then f x else figura x) dib
 
 -- Alguna figura satisface el predicado.
 anyFig :: Pred a -> Dibujo a -> Bool
-anyFig p dib = foldDib (\x -> p x) id id id (\i j xs ys -> xs || ys) (\i j xs ys -> xs || ys) (\xs ys -> xs || ys) dib
+anyFig p dib = foldDib (\x -> p x) id id id (\_ _ xs ys -> xs || ys) (\_ _ xs ys -> xs || ys) (\xs ys -> xs || ys) dib
 
 -- Todas las figuras satisfacen el predicado.
 allFig :: Pred a -> Dibujo a -> Bool
-allFig p dib = foldDib (\x -> p x) id id id (\i j xs ys -> xs && ys) (\i j xs ys -> xs && ys) (\xs ys -> xs && ys) dib
+allFig p dib = foldDib (\x -> p x) id id id (\_ _ xs ys -> xs && ys) (\_ _ xs ys -> xs && ys) (\xs ys -> xs && ys) dib
 
 -- Los dos predicados se cumplen para el elemento recibido.
 andP :: Pred a -> Pred a -> Pred a
@@ -38,5 +37,3 @@ andP p1 p2 a = p1 a && p2 a
 -- Algún predicado se cumple para el elemento recibido.
 orP :: Pred a -> Pred a -> Pred a
 orP p1 p2 a = p1 a || p2 a 
-
-falla = True

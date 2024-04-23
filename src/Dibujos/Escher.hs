@@ -26,7 +26,7 @@ interpBasicaSinColor :: Output BasicaSinColor
 -- interpBasicaSinColor Triangulo x y w = line $ map (x V.+) [(0,0), w, y, (0,0)]                    -- Triangulo rectángulo normal
 interpBasicaSinColor Triangulo x y w = pictures [(line $ map (x V.+) [(0,0), w, y, (0,0)]), (polygon $ map (x V.+) [(0,0), half w, half y, (0,0)])] -- Triangulo rectángulo decorado
 interpBasicaSinColor Rectangulo x y w = line [x, x V.+ y, x V.+ y V.+ w, x V.+ w, x]
-interpBasicaSinColor Vacio x y w = Blank
+interpBasicaSinColor Vacio _ _ _ = Blank
 
 interpBas :: Output Escher
 interpBas (b, c) x y w = colorear c $ interpBasicaSinColor b x y w
