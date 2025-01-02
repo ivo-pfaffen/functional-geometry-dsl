@@ -1,85 +1,58 @@
----
-title: Laboratorio de Funcional
-author: Lallana Augusto, Pfaffen Ivo, Toledo Alejandro
----
-La consigna del laboratorio está en https://tinyurl.com/funcional-2024-famaf
+# Functional Geometry DSL
 
-# 1. Tareas
-Pueden usar esta checklist para indicar el avance.
+**Authors:** Augusto Lallana, Ivo Pfaffen, Alejandro Toledo
 
-## Verificación de que pueden hacer las cosas.
-- [X] Haskell instalado y testeos provistos funcionando. (En Install.md están las instrucciones para instalar.)
-
-## 1.1. Lenguaje
-- [X] Módulo `Dibujo.hs` con el tipo `Dibujo` y combinadores. Puntos 1 a 3 de la consigna.
-- [X] Definición de funciones (esquemas) para la manipulación de dibujos.
-- [X] Módulo `Pred.hs`. Punto extra si definen predicados para transformaciones innecesarias (por ejemplo, espejar dos veces es la identidad).
-
-## 1.2. Interpretación geométrica
-- [X] Módulo `Interp.hs`.
-
-## 1.3. Expresión artística (Utilizar el lenguaje)
-- [X] El dibujo de `Dibujos/Feo.hs` se ve lindo.
-- [X] Módulo `Dibujos/Grilla.hs`.
-- [X] Módulo `Dibujos/Escher.hs`.
-- [X] Listado de dibujos en `Main.hs`.
-
-## 1.4 Tests
-- [X] Tests para `Dibujo.hs`.
-- [X] Tests para `Pred.hs`.
-
-# 2. Experiencia
-Este laboratorio nos dió la oportunidad de profundizar en el desarrollo de programas usando el paradigma funcional. En materias de años pasados trabajamos en programas chicos y “auto contenidos” (alguna función para calcular Fibonacci o un recorrer árbol binario), y esta es nuestra primera experiencia en un entorno más complejo (involucrando librerías externas e I/O). 
-
-Definir un lenguaje (e independizar la sintaxis de su interpretación - la semántica) nos permitió entender más a fondo tanto el proceso de desarrollo de programas funcionales como la creación de DSLs. 
-Nos sorprendimos por la última figura que definimos y lo natural que resulta este paradigma para hacer este tipo de dibujos recursivos.
+This project was developed as part of a university lab exercise focusing on functional programming paradigms. The goal was to design and implement a Domain-Specific Language (DSL) for geometric drawings using Haskell and the Gloss library. The project explores the separation of syntax and semantics, creating recursive and polymorphic data structures, and interpreting them visually.
 
 
-Entre las dificultades que tuvimos, destacamos tener que investigar sobre los contenidos de Gloss y utilizar las funciones y tipos que provee. También tuvimos que tomarnos un tiempo para terminar de comprender la funcionalidad (la interpretación) de las operaciones de nuestro lenguaje. 
+## Draw your own figure
+We include multiple example usages of the DSL under the `Dibujos/` directory.
 
-# 3. Preguntas
+The figure below demonstrates a 10-level Escher figure using the `Escher.hs` file:
+![Escher of 10 levels. Decorated triangle](escher_10.png)
 
-#### 1. ¿Por qué están separadas las funcionalidades en los módulos indicados? Explicar detalladamente la responsabilidad de cada módulo.
-- Módulo `Main.hs`:
-Este módulo es el que se encarga de la interfaz con el usuario, utilizando una monada para hacer el I/O. IO representa acciones como valores, permitiendo manipularlos con funciones puras. Se importan los dibujos realizados en el laboratorio y se permite al usuario elegir qué dibujo mostrar.
+To change the amount of levels you need to tweak the parameters under `escherConf` in the `Dibujos/Escher.hs` file:
+```hs
+escherConf :: Conf
+escherConf = Conf {
+    name = "Escher"
+    , pic = escher 10 (Triangulo, Negro)
+    , bas = interpBas
+}
+``` 
 
-- Módulo `Dibujo.hs`:
-Con este módulo comenzamos a definir nuestro DSL (lenguaje de dominio específico). Se define la sintaxis de nuestro lenguaje, definiendo también nuestro tipo de dato recursivo y polimórfico `Dibujo`, junto a funciones que aplican sobre el mismo. Estas funciones se combinan para generar otros Dibujos. 
+## Installation
 
-- Módulo `Interp.hs`:
-En este módulo implementamos la semántica de nuestro lenguaje. Interpretamos geométricamente la sintaxis del lenguaje definido en `Dibujo.hs` utilizando la librería Gloss, de acuerdo al sistema vectorial indicado. 
+The project is designed to run on Linux. For other operating systems, consider using a virtual machine with Linux.
 
-- Módulo `Pred.hs`:
-En este módulo implementamos predicados que podemos aplicar a nuestros dibujos para ver si las figuras básicas cumplen las propiedades solicitadas.
+### Linux (or macOS)
+Run the following command in a terminal:
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+```
 
-- Módulo `Dibujos/<Nombre>.hs` 
-En este módulo se encuentran los dibujos que realizamos.
-Separamos el uso del lenguaje de la implementación. Modularizamos cada dibujo, lo que nos permite importarlos individualmente al módulo principal (`Main.hs`) y separarlos de la definición o interpretación de nuestro lenguaje.
+### Verifying Installation
+To verify that Gloss is working, run:
+```bash
+cabal test gloss
+```
 
----
-#### 2. ¿Por qué las figuras básicas no están incluidas en la definición del lenguaje, y en vez de eso, es un parámetro del tipo?
+## Project Structure
 
-En nuestro lenguaje queremos la mayor flexibilidad posible. Por eso, a la hora de definir nuestra sintaxis a las figuras básicas las parametrizamos: son un parámetro del tipo `Dibujo`.
-Las figuras básicas pueden variar de definición, las podemos definir con el tipo de dato que nos parezca indicado para el dibujo que querramos hacer. 
+### Modules Overview
+- **`Main.hs`**: Handles user interaction through an IO monad. It imports the drawings and allows users to select which drawing to display.
+- **`Dibujo.hs`**: Defines the DSL syntax, including the recursive and polymorphic `Dibujo` data type and functions to generate and manipulate drawings.
+- **`Interp.hs`**: Implements the semantics of the DSL. It interprets the syntax into geometric representations using the Gloss library.
+- **`Pred.hs`**: Defines predicates to check properties of basic figures in the DSL.
+- **`Dibujos/<Name>.hs`**: Contains individual drawings created with the DSL, separated for modularity.
 
-Por ejemplo, podemos tener figuras básicas del tipo de dato `Bool`, teniendo así 2 figuras básicas (`true` y `false`), que pueden interpretarse como un cuadrado negro o uno blanco. Podríamos también definirlas como números: teniendo figuras básicas del 0 al 100, si queremos agregar una figura básica más simplemente la definimos con 101.
+### Design Choices and Details
 
----
-#### 3. ¿Qué ventaja tiene utilizar una función de `fold` sobre hacer pattern-matching directo?
+#### Separation of Functionalities
+The functionalities are split into modules to ensure clear separation of responsibilities:
+- Syntax (`Dibujo.hs`): Focuses on the structure and combinatory rules of the DSL.
+- Semantics (`Interp.hs`): Translates the structure into a visual output.
+- User Interaction (`Main.hs`): Provides a clean interface for user input and output.
 
-Al utilizar la función de alto orden `fold`, se colapsan los elementos de un tipo de dato específico. En nuestro caso (en el tipo de dato `Dibujo`), podemos modularizar la creación de funciones pasando como parámetro qué funciones queremos aplicar en cada caso. Ahí es donde reemplazamos el uso del pattern-matching.
-Es una forma de aplicar recursión en nuestro tipo `Dibujo` aplicando las funciones específicas dependiendo el constructor, evitando tener que hacer pattern-matching en cada caso.
-
-
----
-#### 4. ¿Cuál es la diferencia entre los predicados definidos en Pred.hs y los tests?
-Los predicados definidos en `Pred.hs` son específicos a nuestra gramática. Nos permiten realizar operaciones lógicas sobre nuestro lenguaje. 
-Los tests verifican la correctitud de las definiciones de las operaciones lógicas de nuestro lenguaje, definidas en `Pred.hs`. Es decir, comprobamos que la semántica realice lo esperado. 
-
-
-# 4. Extras
-En `Escher.hs` tenemos varias interpretaciones distintas para triángulo (ver la función `interpBasicaSinColor`). Según la implementación que se elija, la figura de Escher tendrá forma distinta. Nosotros dejamos descomentada la versión del triángulo rectángulo “decorado”: un triángulo rectángulo con una de sus esquinas pintada de negro.
-
- 
-
-![Escher de 10 niveles. Triángulo decorado](escher_10.png)
+#### Parametric Basic Figures
+The basic figures in the DSL are parameterized to allow flexibility in defining their properties. For instance, a basic figure could be a Boolean (`true` and `false` for black and white squares) or numerical values (e.g., 0-100).

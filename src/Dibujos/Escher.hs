@@ -87,6 +87,6 @@ escher i e =  noneto (esquina i e)         (lado i e)               (espejar (es
 escherConf :: Conf
 escherConf = Conf {
     name = "Escher"
-    , pic = escher 6 (Triangulo, Negro)
+    , pic = escher 10 (Triangulo, Negro)
     , bas = interpBas
 }
